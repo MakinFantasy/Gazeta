@@ -1,8 +1,11 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from .models import Category, Post, Comment
+import logging
+from django.http import HttpResponse
 # Create your views here.
 
+db_logger = logging.getLogger('db')
 
 def home(request):
     post = Post.objects.first()
@@ -18,6 +21,8 @@ def home(request):
 
 def posts(request):
     news = Post.objects.all()
+
+
     return render(request, 'news.html', {
         "news": news
     })
@@ -25,6 +30,7 @@ def posts(request):
 
 def categories(request):
     categories = Category.objects.all()
+
     return render(request, 'category.html', {
         'categories': categories
     })
@@ -33,6 +39,7 @@ def categories(request):
 def category(request, id):
     category = Category.objects.get(id=id)
     news = Post.objects.filter(category=category)
+
     return render(request, 'news-by-category.html', {
         "news": news,
         "category": category
@@ -55,6 +62,8 @@ def post_details(request, id):
     category = Category.objects.get(id=post.category.id)
     comments = Comment.objects.filter(post=post, status=True).order_by('-id')
     related_news = Post.objects.filter(category=category).exclude(id=id)
+
+
     return render(request, 'detail.html', {
         'news': post,
         'comments': comments,
