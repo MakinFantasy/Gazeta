@@ -3,10 +3,17 @@ from .models import Category, Post, Comment, Tag
 # Register your models here.
 
 
+class CategoryPostInline(admin.TabularInline):
+    model = Post
+    extra = 1
+
+
 class AdminCategory(admin.ModelAdmin):
+    inlines = [CategoryPostInline]
     list_display = ('title', 'date_created', 'date_updated')
     list_filter = ['date_created', 'date_updated']
     search_fields = ['title']
+    date_hierarchy = 'date_created'
 
 
 admin.site.register(Category, AdminCategory)
@@ -14,26 +21,30 @@ admin.site.register(Category, AdminCategory)
 
 class AdminPost(admin.ModelAdmin):
     list_display = ('title', 'category',  'time_added')
+    list_display_links = ['title', 'category', 'time_added']
     list_filter = ['category', 'time_added', 'tags']
     search_fields = ['title']
+    date_hierarchy = 'time_added'
+    filter_horizontal = ['tags']
 
-
-admin.site.register(Post, AdminPost)
 
 
 class AdminComment(admin.ModelAdmin):
     list_display = ('title', 'post', 'email', 'content', 'status')
     list_filter = ['status', 'post']
     search_fields = ['post__title', 'title']
-
-
-admin.site.register(Comment, AdminComment)
+    raw_id_fields = ['post']
 
 
 class AdminTag(admin.ModelAdmin):
     list_display = ('title', 'date_created')
     list_filter = ['date_created']
     search_fields = ['title']
+    raw_id_fields = ['post']
 
 
+admin.site.register(Post, AdminPost)
+admin.site.register(Comment, AdminComment)
 admin.site.register(Tag, AdminTag)
+
+

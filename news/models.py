@@ -6,6 +6,7 @@ class Category(models.Model):
     title = models.CharField(max_length=250)
     date_created = models.DateTimeField(default=timezone.now())
     date_updated = models.DateTimeField(auto_now=True)
+    image = models.ImageField(upload_to='imgs/', default='image')
 
     class Meta:
         verbose_name_plural = 'Categories'
